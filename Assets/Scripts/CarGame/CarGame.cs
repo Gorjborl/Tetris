@@ -33,7 +33,16 @@ public class CarGame : MonoBehaviour {
     private bool IsPaused;
     private bool IsPausedinit = false;
     public Button ResumeButton;
+    public Button MoveLeft;
+    public Button MoveRight;
+    public Button PauseBtn;
+    public Button SpeedButton;
+    public bool SpeedClick;
+
     private bool ResumeClick;
+    private bool LeftBtnClick;
+    private bool RightBtnClick;
+    private bool PauseBtnClick;
     public Canvas Pause_Canvas;
     private float EnemySpeed;
 
@@ -48,14 +57,12 @@ public class CarGame : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+                
         SpawnEnemy();
         //SpawnEnemy2();
         ScoreText.text = ScoreRounded.ToString();
         LevelText.text = Level.ToString();
-
-    
-
+        
         startingHighScore = PlayerPrefs.GetInt("HighScoreCar");
         startingHighScore2 = PlayerPrefs.GetInt("HighScoreCar2");
         startingHighScore3 = PlayerPrefs.GetInt("HighScoreCar3");
@@ -77,14 +84,47 @@ public class CarGame : MonoBehaviour {
         LevelText.text = Level.ToString();
         EnemySpeed = FindObjectOfType<EnemyScript>().Speed;
         ResumeClick = false;
+        LeftBtnClick = false;
+        RightBtnClick = false;
+        PauseBtnClick = false;
+
+        
+        MoveLeft.onClick.AddListener(ClickLeft);
+        MoveRight.onClick.AddListener(ClickRight);
+        PauseBtn.onClick.AddListener(ClickPause);
+        SpeedClick = false;
+        SpeedButton.onClick.AddListener(SpeedClickBtn);
+
         ResumeButton.onClick.AddListener(ClickResume);
 
-
     }
+           
+    
+
+    public void SpeedClickBtn()
+    {
+        SpeedClick = true;
+        FindObjectOfType<EnemyScript>().Speed = 1.55f * FindObjectOfType<EnemyScript>().Speed;
+    }    
 
     void ClickResume()
     {
-        ResumeClick = true;
+            ResumeClick = true;
+    }
+
+    void ClickLeft()
+    {
+        LeftBtnClick = true;
+    }
+
+    void ClickRight()
+    {
+        RightBtnClick = true;
+    }
+
+    void ClickPause()
+    {
+        PauseBtnClick = true;
     }
 
 
@@ -129,7 +169,7 @@ public class CarGame : MonoBehaviour {
     {
         
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || LeftBtnClick)
         {
             if (PlayerCar.transform.position != new Vector3 (1, 1, 0))
             {
@@ -137,7 +177,7 @@ public class CarGame : MonoBehaviour {
             }
 
         } else 
-        if (Input.GetKeyDown(KeyCode.RightArrow)) 
+        if (Input.GetKeyDown(KeyCode.RightArrow) || RightBtnClick) 
             
         {
             if (PlayerCar.transform.position != new Vector3(7, 1, 0))
@@ -147,7 +187,7 @@ public class CarGame : MonoBehaviour {
             
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) || ResumeClick)
+        if (Input.GetKeyDown(KeyCode.Escape) || ResumeClick || PauseBtnClick)
         {
             if (Time.timeScale == 1)
             {

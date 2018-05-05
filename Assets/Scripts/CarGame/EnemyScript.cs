@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class EnemyScript : MonoBehaviour {
@@ -12,6 +13,7 @@ public class EnemyScript : MonoBehaviour {
     private Rigidbody2D EnemyBody2;
     public float Speed;
     private float GetLevel;
+
     
 
     // Use this for initialization
@@ -33,6 +35,7 @@ public class EnemyScript : MonoBehaviour {
         UpdateSpeed();
         
     }
+    
 
     void OnCollisionEnter2D(Collision2D collision)
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tetrimino : MonoBehaviour {
 
@@ -26,34 +27,93 @@ public class Tetrimino : MonoBehaviour {
     private bool IsPaused;
 
     private Vector3 DetectWallKick;
-    
+
+    private Button LeftButton;
+    private bool LeftBtnClick;
+
+    private Button RightButton;
+    private bool RightBtnClick;
+
+    private Button RotateButton;
+    private bool RotateBtnClick;
+
+    private Button DropButton;
+    private bool DropBtnClick;
+
+    private Button DownButton;
+    private bool DownBtnClick;
 
     // Use this for initialization
     void Start() {
 
         SoundFile = GetComponent<AudioSource>();
-        
-        
+
+
+        LeftButton = GameObject.Find("Button_Left").GetComponent<Button>();
+        RightButton = GameObject.Find("Button_Right").GetComponent<Button>();
+        RotateButton = GameObject.Find("Button_Rotate").GetComponent<Button>();
+        DropButton = GameObject.Find("Button_Drop").GetComponent<Button>();
+        DownButton = GameObject.Find("Button_Down").GetComponent<Button>();
+
+
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
-        
+
         IsPaused = GameObject.FindObjectOfType<Game>().IsPaused;
 
         if (!IsPaused)
         {
-            checkUserInput();            
+            checkUserInput();
             UpdateTetriminoScore();
             fallSpeed = GameObject.FindObjectOfType<Game>().fallSpeed;
         }
 
         DetectWallKick = transform.position;
-        //Debug.Log(CanWallkick());
+        LeftBtnClick = false;
+        LeftButton.onClick.AddListener(ClickOnLeftBtn);
 
+        RightBtnClick = false;
+        RightButton.onClick.AddListener(ClickOnRightBtn);
+
+        RotateBtnClick = false;
+        RotateButton.onClick.AddListener(ClickOnRotateBtn);
+
+        DropBtnClick = false;
+        DropButton.onClick.AddListener(ClickOnDropBtn);
+
+        DownBtnClick = false;
+        DownButton.onClick.AddListener(ClickOnDownBtn);
     }
-    
+
+    void ClickOnLeftBtn()
+    {
+        LeftBtnClick = true;
+    }
+
+    void ClickOnRightBtn()
+    {
+        RightBtnClick = true;
+    }
+
+    void ClickOnRotateBtn()
+    {
+        RotateBtnClick = true;
+    }
+
+    void ClickOnDropBtn()
+    {
+        DropBtnClick = true;
+    }
+
+    void ClickOnDownBtn()
+    {
+        DownBtnClick = true;
+    }
+
     void UpdateTetriminoScore()
     {
         if (TetriminoScoreTime < 1)
@@ -66,28 +126,20 @@ public class Tetrimino : MonoBehaviour {
             TetriminoScore = Mathf.Max(TetriminoScore - 10, 0);
         }
     }
-
-
+    
 
     void checkUserInput()
     {
-        if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.DownArrow))
-        {
-            HorizontalTimer = 0;
-            VerticalTimer = 0;
-            ButtonDownWaitTimer = 0;
-            movedImmediateHorizontal = false;
-            movedImmediateVertical = false;
-        }
-        if (Input.GetKey(KeyCode.RightArrow))
+        
+        if (Input.GetKey(KeyCode.RightArrow) || RightBtnClick )
         {
             MoveRight();
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.LeftArrow) || LeftBtnClick )
         {
             MoveLeft();
         }
-        else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.UpArrow) || RotateBtnClick )
         {
             RotateLeft();
 
@@ -95,40 +147,19 @@ public class Tetrimino : MonoBehaviour {
         {
             RotateRight();
         }
-        else if (Input.GetKey(KeyCode.DownArrow) || Time.time - fall >= fallSpeed)
+        else if (Input.GetKey(KeyCode.DownArrow) || Time.time - fall >= fallSpeed || DownBtnClick )
         {
             MoveDown();
         }
-        else if (Input.GetKeyDown(KeyCode.Space))
+        else if (Input.GetKeyDown(KeyCode.Space) || DropBtnClick )
         {
             MoveInstantDown();
         }
         
     }
 
-    void MoveLeft()
-    {
-        if (movedImmediateHorizontal)
-        {
-            if (ButtonDownWaitTimer < ButtonDownWaitMax)
-            {
-                ButtonDownWaitTimer += Time.deltaTime;
-                return;
-            }
-
-            if (HorizontalTimer < HorizontalSpeed)
-            {
-                HorizontalTimer += Time.deltaTime;
-                return;
-            }
-            HorizontalTimer = 0;
-        }
-
-        if (!movedImmediateHorizontal)
-        {
-            movedImmediateHorizontal = true;
-        }
-
+    public void MoveLeft()
+    {        
         
             transform.position += new Vector3(-1, 0, 0);
            
@@ -145,29 +176,9 @@ public class Tetrimino : MonoBehaviour {
         
     }
 
-    void MoveRight()
+    public void MoveRight()
     {
-        if (movedImmediateHorizontal)
-        {
-            if (ButtonDownWaitTimer < ButtonDownWaitMax)
-            {
-                ButtonDownWaitTimer += Time.deltaTime;
-                return;
-            }
-
-            if (HorizontalTimer < HorizontalSpeed)
-            {
-                HorizontalTimer += Time.deltaTime;
-                return;
-            }
-            HorizontalTimer = 0;
-        }
-
-        if (!movedImmediateHorizontal)
-        {
-            movedImmediateHorizontal = true;
-        }
-            
+                    
             transform.position += new Vector3(1, 0, 0);
             
             if (CheckIsValidPosition())
@@ -262,13 +273,13 @@ public class Tetrimino : MonoBehaviour {
         PlayLandingAudio();
         FindObjectOfType<Game>().spawnNextTetris();
         Game.CurrentScore += TetriminoScore;
-        //FindObjectOfType<Game>().UpdateHighScore();
+        
 
 
 
     }
 
-    void RotateLeft()
+   public void RotateLeft()
     {
         if (allowRotation)
         {
@@ -575,7 +586,7 @@ public class Tetrimino : MonoBehaviour {
                 
         if (DetectWallKick.x == 0)
         {
-            //Debug.Log("CanWallkick");
+            
             return true;
         }
         
@@ -587,7 +598,7 @@ public class Tetrimino : MonoBehaviour {
 
         if (DetectWallKick.x == 9)
         {
-            //Debug.Log("CanWallkick");
+            
             return true;
         }
         return false;
@@ -599,7 +610,7 @@ public class Tetrimino : MonoBehaviour {
 
         if (DetectWallKick.x == 8)
         {
-            //Debug.Log("CanWallkick");
+            
             return true;
         }
         return false;
@@ -611,7 +622,7 @@ public class Tetrimino : MonoBehaviour {
 
         if (DetectWallKick.x == 1)
         {
-            //Debug.Log("CanWallkick");
+            
             return true;
         }
         return false;

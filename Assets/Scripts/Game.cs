@@ -44,8 +44,16 @@ public class Game : MonoBehaviour {
     public bool IsAnI;
 
     private Vector2 DefaultSpawn = new Vector2 (5,19f);
+        
+    public Button PauseBtn;
+    
 
     
+    private bool PauseBtnClick;
+
+
+
+
 
     private void Awake()
     {
@@ -110,7 +118,9 @@ public class Game : MonoBehaviour {
         }
 
     }
+
     
+
     public void ClearedOneLine()
     {
         CurrentScore += ScoreOneLine + (CurrentLevel * 20);
@@ -181,18 +191,32 @@ public class Game : MonoBehaviour {
         ResumeClick = false;
         ResumeButton.onClick.AddListener(ClickResume);
         
+        PauseBtnClick = false;        
+        PauseBtn.onClick.AddListener(ClickPause);
         
-        
+
     }
 
-    void ClickResume()
+    
+
+    
+
+
+
+void ClickPause()
+{
+    PauseBtnClick = true;
+}
+
+
+void ClickResume()
     {
         ResumeClick = true;
     }
 
     void CheckUserInput()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) || ResumeClick)
+        if (Input.GetKeyDown(KeyCode.Escape) || ResumeClick || PauseBtnClick)
         {
             if (Time.timeScale == 1)
             {
